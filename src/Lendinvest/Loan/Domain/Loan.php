@@ -7,8 +7,10 @@ namespace Lendinvest\Loan\Domain;
 use DateTimeImmutable;
 use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
+use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
+use Lendinvest\Loan\Domain\Investment\Investment;
 use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 
@@ -151,5 +153,28 @@ final class Loan
     public function trancheExists(TrancheId $id): bool
     {
         return isset($this->tranches[$id->toString()]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOpen(): bool
+    {
+        return $this->state()->equals(StateLoan::OPEN());
+    }
+
+    /**
+     * @param TrancheId $trancheId
+     * @param Investment $investment
+     * @throws \Exception
+     */
+    public function invest(
+        TrancheId $trancheId,
+        Investment $investment
+    ) {
+        if(!$this->isOpen()) {
+            throw new InvestorCannotInvest(sprintf('Investor cannot invest, because loan is %s', $this->state()->toString()));
+        }
+        $this->tranches[$trancheId->toString()]->invest($investment);
     }
 }

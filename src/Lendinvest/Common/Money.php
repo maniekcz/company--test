@@ -33,4 +33,54 @@ class Money
         $this->currency = $currency;
         $this->scale = $scale;
     }
+
+    /**
+     * @return string
+     */
+    public function getAmount(): string
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param Money ...$subtrahends
+     * @return Money
+     */
+    public function subtract(Money ...$subtrahends): Money
+    {
+        $amount = $this->amount;
+        foreach ($subtrahends as $subtrahend) {
+            $this->assertSameCurrency($subtrahend);
+            $amount = bcsub($amount, $subtrahend->amount, $this->scale);
+        }
+        return new self($amount, $this->currency);
+    }
+
+    /**
+     * @param Money $other
+     */
+    private function assertSameCurrency(Money $other)
+    {
+        if (!$this->isSameCurrency($other)) {
+            throw new \InvalidArgumentException('Currencies must be identical');
+        }
+    }
+
+    /**
+     * @param Money $other
+     * @return bool
+     */
+    public function isSameCurrency(Money $other): bool
+    {
+        return $this->currency->equals($other->currency);
+    }
+
+    /**
+     * @param Money $other
+     * @return bool
+     */
+    public function equals(Money $other)
+    {
+        return $this->isSameCurrency($other) && $this->amount === $other->amount;
+    }
 }

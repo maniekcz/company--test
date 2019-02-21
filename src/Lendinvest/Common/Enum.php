@@ -53,6 +53,14 @@ abstract class Enum
     }
 
     /**
+     * @return string
+     */
+    public function toString()
+    {
+        return (string)$this->value;
+    }
+
+    /**
      * @param Enum|null $enum
      * @return bool
      */

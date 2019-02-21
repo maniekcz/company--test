@@ -11,6 +11,10 @@ use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
+use Lendinvest\Loan\Domain\Investment\Investment;
+use Lendinvest\Loan\Domain\Investment\InvestmentId;
+use Lendinvest\Loan\Domain\Investor\Investor;
+use Lendinvest\Loan\Domain\Investor\InvestorId;
 use Lendinvest\Loan\Domain\Loan;
 use Lendinvest\Loan\Domain\LoanId;
 use Lendinvest\Loan\Domain\StateLoan;
@@ -148,14 +152,19 @@ class LoanTest extends TestCase
         );
 
         $trancheId = TrancheId::fromString('1');
-        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+        $tranche = Tranche::create($trancheId, 3, new Money('1000', new Currency('GBP')));
 
         $loan->addTranche($tranche);
         $loan->open();
 
-        $amount = new Money('1000', new Currency('GBP;'));
+
+        $amount = new Money('1000', new Currency('GBP'));
         $investor = Investor::create(InvestorId::fromString('1'), $amount);
-        $investment = Investment::create(InvestmentId::fromString('1'), $investor, $amount);
+        $investmentId = InvestmentId::fromString('1');
+        $investment = Investment::create($investmentId, $investor, $amount);
         $loan->invest($trancheId, $investment);
+
+        Assert::assertCount(1, $loan->tranches()[$trancheId->toString()]->investments());
+        Assert::assertTrue($loan->tranches()[$trancheId->toString()]->amount()->equals(new Money('0.00', new Currency('GBP'))));
     }
 }
