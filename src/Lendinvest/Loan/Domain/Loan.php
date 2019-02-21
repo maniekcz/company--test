@@ -6,6 +6,7 @@ namespace Lendinvest\Loan\Domain;
 
 use DateTimeImmutable;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
+use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 
@@ -81,7 +82,7 @@ final class Loan
     public function addTranche(Tranche $tranche)
     {
         if ($this->trancheExists($tranche->id())) {
-            throw new \Exception('Tranche already exists');
+            throw new TrancheAlreadyExists();
         }
         $this->tranches[$tranche->id()->toString()] = $tranche;
     }
