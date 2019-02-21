@@ -7,8 +7,10 @@ namespace Tests\Lendinvest\Loan;
 use DateTimeImmutable;
 use Lendinvest\Common\Currency;
 use Lendinvest\Common\Money;
+use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
+use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
 use Lendinvest\Loan\Domain\Loan;
 use Lendinvest\Loan\Domain\LoanId;
 use Lendinvest\Loan\Domain\StateLoan;
@@ -100,5 +102,37 @@ class LoanTest extends TestCase
         $loan->addTranche($tranche);
         $loan->open();
         Assert::assertEquals(StateLoan::OPEN(), $loan->state());
+    }
+
+    /**
+     * @test
+     */
+    public function when_loan_is_created_and_tranche_is_not_added_then_loan_cannot_be_open()
+    {
+        $loan = Loan::create(
+            LoanId::fromString('1'),
+            new DateTimeImmutable(' 2015-10-1'),
+            new DateTimeImmutable('2015-11-15')
+        );
+        $this->expectException(TrancheIsNotDefined::class);
+        $loan->open();
+    }
+
+    /**
+     * @test
+     */
+    public function when_loan_is_created_and_open_and_tranche_is_added_then_loan_cannot_be_open()
+    {
+        $trancheId = TrancheId::fromString('1');
+        $loan = Loan::create(
+            LoanId::fromString('1'),
+            new DateTimeImmutable(' 2015-10-1'),
+            new DateTimeImmutable('2015-11-15')
+        );
+        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+        $loan->addTranche($tranche);
+        $loan->open();
+        $this->expectException(CannotOpenLoan::class);
+        $loan->open();
     }
 }
