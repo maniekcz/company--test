@@ -124,11 +124,11 @@ final class Loan
      */
     public function open()
     {
-        if(!$this->state->equals(StateLoan::NEW())) {
+        if (!$this->state->equals(StateLoan::NEW())) {
             throw new CannotOpenLoan(sprintf('Loan cannot be opens, because is %s', $this->state));
         }
 
-        if(0 >= count($this->tranches)) {
+        if (0 >= count($this->tranches)) {
             throw new TrancheIsNotDefined();
         }
         $this->state = StateLoan::OPEN();
@@ -172,7 +172,7 @@ final class Loan
         TrancheId $trancheId,
         Investment $investment
     ) {
-        if(!$this->isOpen()) {
+        if (!$this->isOpen()) {
             throw new InvestorCannotInvest(sprintf('Investor cannot invest, because loan is %s', $this->state()->toString()));
         }
         $this->tranches[$trancheId->toString()]->invest($investment);

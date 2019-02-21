@@ -93,7 +93,7 @@ class Tranche
      */
     public function invest(Investment $investment)
     {
-        if(!$this->isInvestable($investment->amount())) {
+        if (!$this->isInvestable($investment->amount())) {
             throw new InvestorCannotInvest();
         }
         $this->investments[$investment->id()->toString()] = $investment;

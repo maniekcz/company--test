@@ -48,7 +48,7 @@ class Investment
      */
     public static function create(InvestmentId $id, Investor $investor, Money $amount)
     {
-        if($investor->canInvest($amount)){
+        if ($investor->canInvest($amount)) {
             throw new InvestorCannotInvest(sprintf('Investor has not enough money, needs at least  %s', $amount->getAmount()));
         }
 

@@ -40,5 +40,4 @@ class CurrencyTest extends TestCase
         $currency1 = new Currency('GBP');
         Assert::assertTrue($currency->equals($currency1));
     }
-
 }

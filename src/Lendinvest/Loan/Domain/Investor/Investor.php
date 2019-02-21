@@ -56,5 +56,4 @@ class Investor
     {
         return $this->balance->getAmount() > $money->getAmount();
     }
-
 }
