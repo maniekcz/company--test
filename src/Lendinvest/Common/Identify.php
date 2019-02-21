@@ -28,6 +28,11 @@ trait Identify
         return $this->id;
     }
 
+    public function toString(): string
+    {
+        return $this->id;
+    }
+
     /**
      * @param string $value
      * @return self

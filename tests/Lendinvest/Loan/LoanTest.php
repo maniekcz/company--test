@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Tests\Lendinvest\Loan;
 
 use DateTimeImmutable;
+use Lendinvest\Common\Currency;
+use Lendinvest\Common\Money;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 use Lendinvest\Loan\Domain\Loan;
 use Lendinvest\Loan\Domain\LoanId;
+use Lendinvest\Loan\Domain\Tranche\Tranche;
+use Lendinvest\Loan\Domain\Tranche\TrancheId;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
@@ -55,5 +59,4 @@ class LoanTest extends TestCase
         $loan->addTranche($tranche);
         Assert::assertTrue($loan->trancheExists($trancheId));
     }
-
 }
