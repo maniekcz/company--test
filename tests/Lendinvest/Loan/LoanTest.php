@@ -39,4 +39,21 @@ class LoanTest extends TestCase
             new DateTimeImmutable('2015-11-15')
         );
     }
+
+    /**
+     * @test
+     */
+    public function when_loan_is_created_then_tranche_can_be_add()
+    {
+        $trancheId = TrancheId::fromString('1');
+        $loan = Loan::create(
+            LoanId::fromString('1'),
+            new \DateTimeImmutable(' 2015-10-1'),
+            new \DateTimeImmutable('2015-11-15')
+        );
+        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+        $loan->addTranche($tranche);
+        Assert::assertTrue($loan->trancheExists($trancheId));
+    }
+
 }
