@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Domain;
 
 use DateTimeImmutable;
+use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 
 final class Loan
 {
@@ -28,12 +29,16 @@ final class Loan
      * @param LoanId $id
      * @param DateTimeImmutable $startDate
      * @param DateTimeImmutable $endDate
+     * @throws DateIsWrong
      */
     public function __construct(
         LoanId $id,
         DateTimeImmutable $startDate,
         DateTimeImmutable $endDate
     ) {
+        if($startDate > $endDate) {
+            throw new DateIsWrong('End date cannot be lower then start date');
+        }
         $this->id = $id;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
