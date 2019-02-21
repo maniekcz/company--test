@@ -135,4 +135,27 @@ class LoanTest extends TestCase
         $this->expectException(CannotOpenLoan::class);
         $loan->open();
     }
+
+    /**
+     * @test
+     */
+    public function when_loan_is_open_then_investor_can_invest()
+    {
+        $loan = Loan::create(
+            LoanId::fromString('1'),
+            new DateTimeImmutable(' 2015-10-1'),
+            new DateTimeImmutable('2015-11-15')
+        );
+
+        $trancheId = TrancheId::fromString('1');
+        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+
+        $loan->addTranche($tranche);
+        $loan->open();
+
+        $amount = new Money('1000', new Currency('GBP;'));
+        $investor = Investor::create(InvestorId::fromString('1'), $amount);
+        $investment = Investment::create(InvestmentId::fromString('1'), $investor, $amount);
+        $loan->invest($trancheId, $investment);
+    }
 }
