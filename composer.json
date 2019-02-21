@@ -1,0 +1,29 @@
+{
+    "name": "maniekcz/lendinvest--test",
+    "autoload": {
+        "psr-4": { "": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "ext-bcmath": "*",
+        "php": ">=7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0"
+    },
+    "authors": [
+        {
+            "name": "Marian Czerniejewski",
+            "email": "marian@czerniejewski.pl"
+        }
+    ],
+    "scripts": {
+        "unit": [
+            "./vendor/bin/phpunit"
+        ]
+    }
+}
