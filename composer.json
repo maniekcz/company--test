@@ -24,6 +24,9 @@
     "scripts": {
         "unit": [
             "./vendor/bin/phpunit"
+        ],
+        "coverage-unit": [
+            "./vendor/bin/phpunit --coverage-html build/coverage-report"
         ]
     }
 }

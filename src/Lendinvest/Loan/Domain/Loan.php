@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Domain;
 
 use DateTimeImmutable;
+use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
+use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
 use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 
@@ -33,6 +35,11 @@ final class Loan
     private $tranches;
 
     /**
+     * @var StateLoan
+     */
+    private $state;
+
+    /**
      * Loan constructor.
      * @param LoanId $id
      * @param DateTimeImmutable $startDate
@@ -50,6 +57,8 @@ final class Loan
         $this->id = $id;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->tranches = [];
+        $this->state = StateLoan::NEW();
     }
 
     /**
@@ -58,6 +67,38 @@ final class Loan
     public function id(): LoanId
     {
         return $this->id;
+    }
+
+    /**
+     * @return DateTimeImmutable
+     */
+    public function startDate(): DateTimeImmutable
+    {
+        return $this->startDate;
+    }
+
+    /**
+     * @return DateTimeImmutable
+     */
+    public function endDate(): DateTimeImmutable
+    {
+        return $this->endDate;
+    }
+
+    /**
+     * @return Tranche[]
+     */
+    public function tranches(): array
+    {
+        return $this->tranches;
+    }
+
+    /**
+     * @return StateLoan
+     */
+    public function state(): StateLoan
+    {
+        return $this->state;
     }
 
     /**
@@ -73,6 +114,22 @@ final class Loan
         DateTimeImmutable $endDate
     ) {
         return new self($id, $startDate, $endDate);
+    }
+
+    /**
+     * @throws CannotOpenLoan
+     * @throws TrancheIsNotDefined
+     */
+    public function open()
+    {
+        if(!$this->state->equals(StateLoan::NEW())) {
+            throw new CannotOpenLoan(sprintf('Loan cannot be opens, because is %s', $this->state));
+        }
+
+        if(0 >= count($this->tranches)) {
+            throw new TrancheIsNotDefined();
+        }
+        $this->state = StateLoan::OPEN();
     }
 
     /**

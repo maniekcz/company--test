@@ -11,6 +11,7 @@ use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Loan;
 use Lendinvest\Loan\Domain\LoanId;
+use Lendinvest\Loan\Domain\StateLoan;
 use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 use PHPUnit\Framework\Assert;
@@ -24,12 +25,18 @@ class LoanTest extends TestCase
     public function when_data_is_correct_then_loan_can_be_create()
     {
         $loanId = LoanId::fromString('1');
+        $startDate =  new DateTimeImmutable('2015-10-1');
+        $endDate = new DateTimeImmutable('2015-11-15');
         $loan = Loan::create(
             $loanId,
-            new DateTimeImmutable('2015-10-1'),
-            new DateTimeImmutable('2015-11-15')
+            $startDate,
+            $endDate
         );
         Assert::assertEquals($loanId, $loan->id());
+        Assert::assertEquals($startDate, $loan->startDate());
+        Assert::assertEquals($endDate, $loan->endDate());
+        Assert::assertEquals([], $loan->tranches());
+        Assert::assertEquals((string) $loanId, (string) $loan->id());
     }
 
     /**
@@ -53,8 +60,8 @@ class LoanTest extends TestCase
         $trancheId = TrancheId::fromString('1');
         $loan = Loan::create(
             LoanId::fromString('1'),
-            new \DateTimeImmutable(' 2015-10-1'),
-            new \DateTimeImmutable('2015-11-15')
+            new DateTimeImmutable(' 2015-10-1'),
+            new DateTimeImmutable('2015-11-15')
         );
         $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
         $loan->addTranche($tranche);
@@ -69,8 +76,8 @@ class LoanTest extends TestCase
         $trancheId = TrancheId::fromString('1');
         $loan = Loan::create(
             LoanId::fromString('1'),
-            new \DateTimeImmutable(' 2015-10-1'),
-            new \DateTimeImmutable('2015-11-15')
+            new DateTimeImmutable(' 2015-10-1'),
+            new DateTimeImmutable('2015-11-15')
         );
         $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
         $loan->addTranche($tranche);
@@ -78,13 +85,16 @@ class LoanTest extends TestCase
         $loan->addTranche($tranche);
     }
 
+    /**
+     * @test
+     */
     public function when_loan_is_created_and_tranche_is_added_then_loan_can_be_open()
     {
         $trancheId = TrancheId::fromString('1');
         $loan = Loan::create(
-            $trancheId,
-            new \DateTimeImmutable(' 2015-10-1'),
-            new \DateTimeImmutable('2015-11-15')
+            LoanId::fromString('1'),
+            new DateTimeImmutable(' 2015-10-1'),
+            new DateTimeImmutable('2015-11-15')
         );
         $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
         $loan->addTranche($tranche);

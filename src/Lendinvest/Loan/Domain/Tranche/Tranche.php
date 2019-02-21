@@ -23,15 +23,6 @@ class Tranche
      */
     private $amount;
 
-
-    /**
-     * @return TrancheId
-     */
-    public function id(): TrancheId
-    {
-        return $this->id;
-    }
-
     /**
      * Tranche constructor.
      * @param TrancheId $id
@@ -43,6 +34,30 @@ class Tranche
         $this->id = $id;
         $this->interest = $interest;
         $this->amount = $amount;
+    }
+
+    /**
+     * @return TrancheId
+     */
+    public function id(): TrancheId
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function interest(): int
+    {
+        return $this->interest;
+    }
+
+    /**
+     * @return Money
+     */
+    public function amount(): Money
+    {
+        return $this->amount;
     }
 
     /**
