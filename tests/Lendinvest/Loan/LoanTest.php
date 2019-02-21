@@ -77,4 +77,18 @@ class LoanTest extends TestCase
         $this->expectException(TrancheAlreadyExists::class);
         $loan->addTranche($tranche);
     }
+
+    public function when_loan_is_created_and_tranche_is_added_then_loan_can_be_open()
+    {
+        $trancheId = TrancheId::fromString('1');
+        $loan = Loan::create(
+            $trancheId,
+            new \DateTimeImmutable(' 2015-10-1'),
+            new \DateTimeImmutable('2015-11-15')
+        );
+        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+        $loan->addTranche($tranche);
+        $loan->open();
+        Assert::assertEquals(StateLoan::OPEN(), $loan->state());
+    }
 }
