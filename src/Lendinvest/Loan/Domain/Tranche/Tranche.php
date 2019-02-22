@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Domain\Tranche;
 
 use Lendinvest\Common\Money;
+use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use Lendinvest\Loan\Domain\Investment\Investment;
+use Lendinvest\Loan\Domain\Investment\InvestmentId;
 
 class Tranche
 {
@@ -89,15 +91,28 @@ class Tranche
 
     /**
      * @param Investment $investment
-     * @throws \Exception
+     * @throws InvestorCannotInvest
+     * @throws InvestmentAlreadyExists
      */
     public function invest(Investment $investment)
     {
         if (!$this->isInvestable($investment->amount())) {
-            throw new InvestorCannotInvest();
+            throw new InvestorCannotInvest('All amount has been used for this tranche.');
+        }
+        if ($this->investmentExists($investment->id())) {
+            throw new InvestmentAlreadyExists();
         }
         $this->investments[$investment->id()->toString()] = $investment;
         $this->amount = $this->amount->subtract($investment->amount());
+    }
+
+    /**
+     * @param InvestmentId $id
+     * @return bool
+     */
+    public function investmentExists(InvestmentId $id): bool
+    {
+        return isset($this->investments[$id->toString()]);
     }
 
     /**

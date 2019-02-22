@@ -147,6 +147,19 @@ final class Loan
     }
 
     /**
+     * @param TrancheId $trancheId
+     * @return Tranche|mixed
+     * @throws TrancheIsNotDefined
+     */
+    public function getTranche(TrancheId $trancheId)
+    {
+        if (!$this->trancheExists($trancheId)) {
+            throw new TrancheIsNotDefined(sprintf('Tranche with ID %s is not defined', $trancheId->toString()));
+        }
+        return $this->tranches[$trancheId->toString()];
+    }
+
+    /**
      * @param TrancheId $id
      * @return bool
      */
@@ -175,6 +188,6 @@ final class Loan
         if (!$this->isOpen()) {
             throw new InvestorCannotInvest(sprintf('Investor cannot invest, because loan is %s', $this->state()->toString()));
         }
-        $this->tranches[$trancheId->toString()]->invest($investment);
+        $this->getTranche($trancheId)->invest($investment);
     }
 }
