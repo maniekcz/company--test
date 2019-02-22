@@ -54,6 +54,6 @@ class Investor
      */
     public function canInvest(Money $money): bool
     {
-        return $this->balance->getAmount() > $money->getAmount();
+        return $this->balance->greaterThanOrEqual($money);
     }
 }

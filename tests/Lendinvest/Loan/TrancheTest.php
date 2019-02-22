@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Lendinvest\Loan;
 
-use Lendinvest\Common\Currency;
-use Lendinvest\Common\Money;
-use Lendinvest\Loan\Domain\Tranche\Tranche;
-use Lendinvest\Loan\Domain\Tranche\TrancheId;
+use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Tests\Lendinvest\Loan\MotherObject\InvestmentMother;
+use Tests\Lendinvest\Loan\MotherObject\InvestorMother;
+use Tests\Lendinvest\Loan\MotherObject\TrancheMother;
 
 class TrancheTest extends TestCase
 {
@@ -18,17 +18,30 @@ class TrancheTest extends TestCase
      */
     public function when_data_is_correct_then_tranche_can_be_create()
     {
-        $trancheId = TrancheId::fromString('1');
+        $trancheId = '1';
         $interest = 3;
-        $money =  new Money('100', new Currency('GBP'));
-        $tranche = Tranche::create(
-            $trancheId,
-            $interest,
-            $money
-        );
-        Assert::assertEquals($trancheId, $tranche->id());
+        $amount = '100';
+        $tranche = TrancheMother::withData($trancheId, $interest, $amount, 'GBP');
         Assert::assertEquals($interest, $tranche->interest());
-        Assert::assertEquals($money, $tranche->amount());
+        Assert::assertEquals($amount, $tranche->amount()->getAmount());
         Assert::assertEquals((string) $trancheId, (string) $tranche->id());
+    }
+
+    /**
+     * @test
+     */
+    public function when_tranche_is_invested_then_the_same_investment_cannot_be_added()
+    {
+        $tranche = TrancheMother::withData('1', 3, '1000', 'GBP');;
+        $investment = InvestmentMother::withData(
+            '2',
+            InvestorMother::withData('3', '1000', 'GBP'),
+            '100',
+            'GBP',
+            '2019-01-01'
+        );
+        $tranche->invest($investment);
+        $this->expectException(InvestmentAlreadyExists::class);
+        $tranche->invest($investment);
     }
 }

@@ -57,8 +57,8 @@ class Investment
      */
     public static function create(InvestmentId $id, Investor $investor, Money $amount, DateTimeImmutable $created)
     {
-        if ($investor->canInvest($amount)) {
-            throw new InvestorCannotInvest(sprintf('Investor has not enough money, needs at least  %s', $amount->getAmount()));
+        if (!$investor->canInvest($amount)) {
+            throw new InvestorCannotInvest(sprintf('Investor has not enough money, needs at least %s %s', $amount->getAmount(), $amount->currency()->getCode()));
         }
 
         return new self($id, $investor->id(), $amount, $created);

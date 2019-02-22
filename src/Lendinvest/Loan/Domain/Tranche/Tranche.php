@@ -121,6 +121,6 @@ class Tranche
      */
     public function isInvestable(Money $money): bool
     {
-        return $this->amount->getAmount() >= $money->getAmount();
+        return $this->amount->greaterThanOrEqual($money);
     }
 }

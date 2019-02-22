@@ -16,13 +16,15 @@ use Lendinvest\Loan\Domain\Investment\Investment;
 use Lendinvest\Loan\Domain\Investment\InvestmentId;
 use Lendinvest\Loan\Domain\Investor\Investor;
 use Lendinvest\Loan\Domain\Investor\InvestorId;
-use Lendinvest\Loan\Domain\Loan;
-use Lendinvest\Loan\Domain\LoanId;
 use Lendinvest\Loan\Domain\StateLoan;
-use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Tests\Lendinvest\Common\MotherObject\MoneyMother;
+use Tests\Lendinvest\Loan\MotherObject\InvestmentMother;
+use Tests\Lendinvest\Loan\MotherObject\InvestorMother;
+use Tests\Lendinvest\Loan\MotherObject\LoanMother;
+use Tests\Lendinvest\Loan\MotherObject\TrancheMother;
 
 class LoanTest extends TestCase
 {
@@ -31,17 +33,12 @@ class LoanTest extends TestCase
      */
     public function when_data_is_correct_then_loan_can_be_create()
     {
-        $loanId = LoanId::fromString('1');
-        $startDate =  new DateTimeImmutable('2015-10-1');
-        $endDate = new DateTimeImmutable('2015-11-15');
-        $loan = Loan::create(
-            $loanId,
-            $startDate,
-            $endDate
-        );
-        Assert::assertEquals($loanId, $loan->id());
-        Assert::assertEquals($startDate, $loan->startDate());
-        Assert::assertEquals($endDate, $loan->endDate());
+        $loanId = '1';
+        $startDate = '2015-10-01';
+        $endDate ='2015-11-15';
+        $loan = LoanMother::withData($loanId, $startDate, $endDate);
+        Assert::assertEquals($startDate, $loan->startDate()->format('Y-m-d'));
+        Assert::assertEquals($endDate, $loan->endDate()->format('Y-m-d'));
         Assert::assertEquals([], $loan->tranches());
         Assert::assertEquals((string) $loanId, (string) $loan->id());
     }
@@ -52,11 +49,7 @@ class LoanTest extends TestCase
     public function when_dates_are_wrong_then_loan_cannot_be_create()
     {
         $this->expectException(DateIsWrong::class);
-        Loan::create(
-            LoanId::fromString('1'),
-            new DateTimeImmutable('2015-12-1'),
-            new DateTimeImmutable('2015-11-15')
-        );
+        LoanMother::withData('1', '2015-12-1', '2015-11-15');
     }
 
     /**
@@ -64,15 +57,11 @@ class LoanTest extends TestCase
      */
     public function when_loan_is_created_then_tranche_can_be_add()
     {
-        $trancheId = TrancheId::fromString('1');
-        $loan = Loan::create(
-            LoanId::fromString('1'),
-            new DateTimeImmutable('2015-10-1'),
-            new DateTimeImmutable('2015-11-15')
-        );
-        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+        $trancheId = '1';
+        $loan = LoanMother::withId('1');
+        $tranche = TrancheMother::withId($trancheId);
         $loan->addTranche($tranche);
-        Assert::assertTrue($loan->trancheExists($trancheId));
+        Assert::assertTrue($loan->trancheExists(TrancheId::fromString($trancheId)));
     }
 
     /**
@@ -80,13 +69,8 @@ class LoanTest extends TestCase
      */
     public function when_loan_is_created_and_tranche_is_added_then_the_same_tranche_cannot_be_add()
     {
-        $trancheId = TrancheId::fromString('1');
-        $loan = Loan::create(
-            LoanId::fromString('1'),
-            new DateTimeImmutable('2015-10-1'),
-            new DateTimeImmutable('2015-11-15')
-        );
-        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+        $loan = LoanMother::withId('1');
+        $tranche =  TrancheMother::withId('1');
         $loan->addTranche($tranche);
         $this->expectException(TrancheAlreadyExists::class);
         $loan->addTranche($tranche);
@@ -97,13 +81,8 @@ class LoanTest extends TestCase
      */
     public function when_loan_is_created_and_tranche_is_added_then_loan_can_be_open()
     {
-        $trancheId = TrancheId::fromString('1');
-        $loan = Loan::create(
-            LoanId::fromString('1'),
-            new DateTimeImmutable('2015-10-1'),
-            new DateTimeImmutable('2015-11-15')
-        );
-        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+        $loan = LoanMother::withId('1');
+        $tranche = TrancheMother::withId('1');
         $loan->addTranche($tranche);
         $loan->open();
         Assert::assertEquals(StateLoan::OPEN(), $loan->state());
@@ -114,11 +93,7 @@ class LoanTest extends TestCase
      */
     public function when_loan_is_created_and_tranche_is_not_added_then_loan_cannot_be_open()
     {
-        $loan = Loan::create(
-            LoanId::fromString('1'),
-            new DateTimeImmutable('2015-10-1'),
-            new DateTimeImmutable('2015-11-15')
-        );
+        $loan = LoanMother::withId('1');
         $this->expectException(TrancheIsNotDefined::class);
         $loan->open();
     }
@@ -126,15 +101,20 @@ class LoanTest extends TestCase
     /**
      * @test
      */
+    public function when_loan_is_created_and_tranche_is_not_added_then_tranche_cannot_be_fetch()
+    {
+        $loan = LoanMother::withId('1');
+        $this->expectException(TrancheIsNotDefined::class);
+        $loan->getTranche(TrancheId::fromString('1000'));
+    }
+
+    /**
+     * @test
+     */
     public function when_loan_is_created_and_open_and_tranche_is_added_then_loan_cannot_be_open()
     {
-        $trancheId = TrancheId::fromString('1');
-        $loan = Loan::create(
-            LoanId::fromString('1'),
-            new DateTimeImmutable('2015-10-1'),
-            new DateTimeImmutable('2015-11-15')
-        );
-        $tranche = Tranche::create($trancheId, 3, new Money('100', new Currency('GBP')));
+        $loan =  LoanMother::withId('1');
+        $tranche = TrancheMother::withId('1');
         $loan->addTranche($tranche);
         $loan->open();
         $this->expectException(CannotOpenLoan::class);
@@ -146,26 +126,44 @@ class LoanTest extends TestCase
      */
     public function when_loan_is_open_then_investor_can_invest()
     {
-        $loan = Loan::create(
-            LoanId::fromString('1'),
-            new DateTimeImmutable('2015-10-1'),
-            new DateTimeImmutable('2015-11-15')
-        );
-
+        $loan =  LoanMother::withId('1');
         $trancheId = TrancheId::fromString('1');
-        $tranche = Tranche::create($trancheId, 3, new Money('1000', new Currency('GBP')));
-
+        $tranche = TrancheMother::withData($trancheId->toString(), 3, '1000', 'GBP');
         $loan->addTranche($tranche);
         $loan->open();
 
-        $amount = new Money('1000', new Currency('GBP'));
-        $investor = Investor::create(InvestorId::fromString('1'), $amount);
-        $investmentId = InvestmentId::fromString('1');
-        $investment = Investment::create($investmentId, $investor, $amount, new DateTimeImmutable('2015-10-03'));
+        $investment = InvestmentMother::withData(
+            '1',
+            InvestorMother::withData('2', '1000', 'GBP'),
+            '1000',
+            'GBP',
+            '2015-10-03'
+        );
         $loan->invest($trancheId, $investment);
 
         Assert::assertCount(1, $loan->getTranche($trancheId)->investments());
-        Assert::assertTrue($loan->getTranche($trancheId)->amount()->equals(new Money('0.00', new Currency('GBP'))));
+        Assert::assertTrue($loan->getTranche($trancheId)->amount()->equals(MoneyMother::withData('0.00', 'GBP')));
+    }
+
+    /**
+     * @test
+     */
+    public function when_loan_is_not_open_then_investor_cannot_invest()
+    {
+        $loan =  LoanMother::withId('1');
+        $trancheId = TrancheId::fromString('1');
+        $tranche = TrancheMother::withData($trancheId->toString(), 3, '1000', 'GBP');
+        $loan->addTranche($tranche);
+        $investment = InvestmentMother::withData(
+            '1',
+            InvestorMother::withData('2', '1000', 'GBP'),
+            '1000',
+            'GBP',
+            '2015-10-03'
+        );
+
+        $this->expectException(InvestorCannotInvest::class);
+        $loan->invest($trancheId, $investment);
     }
 
     /**
@@ -173,28 +171,27 @@ class LoanTest extends TestCase
      */
     public function when_loan_is_open_and_tranche_is_max_invested_then_investor_cannot_invest()
     {
-        $loan = Loan::create(
-            LoanId::fromString('1'),
-            new DateTimeImmutable('2015-10-1'),
-            new DateTimeImmutable('2015-11-15')
-        );
-
+        $loan =  LoanMother::withId('1');
         $trancheId = TrancheId::fromString('1');
-        $tranche = Tranche::create($trancheId, 3, new Money('1000', new Currency('GBP')));
-
+        $tranche = $tranche = TrancheMother::withData($trancheId->toString(), 3, '1000', 'GBP');
         $loan->addTranche($tranche);
         $loan->open();
-
-        $amount = new Money('1000', new Currency('GBP'));
-        $investor = Investor::create(InvestorId::fromString('1'), $amount);
-        $investmentId = InvestmentId::fromString('1');
-        $investment = Investment::create($investmentId, $investor, $amount, new DateTimeImmutable('2015-10-03'));
+        $investment = InvestmentMother::withData(
+            '1',
+            InvestorMother::withData('2', '1000', 'GBP'),
+            '1000',
+            'GBP',
+            '2015-10-03'
+        );
         $loan->invest($trancheId, $investment);
+        $investment = InvestmentMother::withData(
+            '1',
+            InvestorMother::withData('2', '1000', 'GBP'),
+            '1000',
+            'GBP',
+            '2015-10-03'
+        );
 
-        $amount = new Money('1000', new Currency('GBP'));
-        $investor = Investor::create(InvestorId::fromString('2'), $amount);
-        $investmentId = InvestmentId::fromString('2');
-        $investment = Investment::create($investmentId, $investor, $amount, new DateTimeImmutable('2015-10-03'));
         $this->expectException(InvestorCannotInvest::class);
         $loan->invest($trancheId, $investment);
     }

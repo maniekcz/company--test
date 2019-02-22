@@ -43,6 +43,14 @@ class Money
     }
 
     /**
+     * @return Currency
+     */
+    public function currency(): Currency
+    {
+        return $this->currency;
+    }
+
+    /**
      * @param Money ...$subtrahends
      * @return Money
      */
@@ -82,5 +90,51 @@ class Money
     public function equals(Money $other)
     {
         return $this->isSameCurrency($other) && $this->amount === $other->amount;
+    }
+
+    /**
+     * @param Money $other
+     * @return mixed
+     */
+    public function compare(Money $other)
+    {
+        $this->assertSameCurrency($other);
+        return bccomp($this->amount, $other->amount, $this->scale);
+    }
+
+    /**
+     * @param Money $other
+     * @return bool
+     */
+    public function greaterThan(Money $other)
+    {
+        return $this->compare($other) > 0;
+    }
+
+    /**
+     * @param Money $other
+     * @return bool
+     */
+    public function greaterThanOrEqual(Money $other)
+    {
+        return $this->compare($other) >= 0;
+    }
+
+    /**
+     * @param Money $other
+     * @return bool
+     */
+    public function lessThan(Money $other)
+    {
+        return $this->compare($other) < 0;
+    }
+
+    /**
+     * @param Money $other
+     * @return bool
+     */
+    public function lessThanOrEqual(Money $other)
+    {
+        return $this->compare($other) <= 0;
     }
 }
