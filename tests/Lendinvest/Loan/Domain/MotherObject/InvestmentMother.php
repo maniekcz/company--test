@@ -7,6 +7,7 @@ namespace Tests\Lendinvest\Loan\Domain\MotherObject;
 use Lendinvest\Loan\Domain\Investment\Investment;
 use Lendinvest\Loan\Domain\Investment\InvestmentId;
 use Lendinvest\Loan\Domain\Investor\Investor;
+use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Tests\Lendinvest\Common\MotherObject\MoneyMother;
 
 class InvestmentMother
@@ -21,6 +22,7 @@ class InvestmentMother
         return Investment::create(
             InvestmentId::fromString($id),
             InvestorMother::withId('1'),
+            TrancheMother::withId('1'),
             MoneyMother::correct(),
             new \DateTimeImmutable()
         );
@@ -29,6 +31,7 @@ class InvestmentMother
     /**
      * @param string $id
      * @param Investor $investor
+     * @param Tranche $tranche
      * @param string $amount
      * @param string $currency
      * @param string $date
@@ -38,6 +41,7 @@ class InvestmentMother
     public static function withData(
         string $id,
         Investor $investor,
+        Tranche $tranche,
         string $amount,
         string $currency,
         string $date
@@ -45,6 +49,7 @@ class InvestmentMother
         return Investment::create(
             InvestmentId::fromString($id),
             $investor,
+            $tranche,
             MoneyMother::withData($amount, $currency),
             new \DateTimeImmutable($date)
         );

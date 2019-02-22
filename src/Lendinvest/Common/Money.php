@@ -51,6 +51,20 @@ class Money
     }
 
     /**
+     * @param Money ...$addends
+     * @return Money
+     */
+    public function add(Money ...$addends): Money
+    {
+        $amount = $this->amount;
+        foreach ($addends as $addend) {
+            $this->assertSameCurrency($addend);
+            $amount = bcadd($amount, $addend->amount, $this->scale);
+        }
+        return new self($amount, $this->currency);
+    }
+
+    /**
      * @param Money ...$subtrahends
      * @return Money
      */

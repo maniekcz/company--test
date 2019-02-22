@@ -70,6 +70,14 @@ class Investor
     }
 
     /**
+     * @param Money $amount
+     */
+    public function increaseBalance(Money $amount)
+    {
+        $this->balance = $this->balance->add($amount);
+    }
+
+    /**
      * @param Money $money
      * @return bool
      */

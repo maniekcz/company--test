@@ -7,10 +7,12 @@ namespace Lendinvest\Loan\Domain;
 use DateTimeImmutable;
 use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
+use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
 use Lendinvest\Loan\Domain\Investment\Investment;
+use Lendinvest\Loan\Domain\Investment\InvestmentId;
 use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 
@@ -40,6 +42,11 @@ final class Loan
      * @var StateLoan
      */
     private $state;
+
+    /**
+     * @var Investment[]
+     */
+    private $investments;
 
     /**
      * Loan constructor.
@@ -101,6 +108,14 @@ final class Loan
     public function state(): StateLoan
     {
         return $this->state;
+    }
+
+    /**
+     * @return array
+     */
+    public function investments(): array
+    {
+        return $this->investments;
     }
 
     /**
@@ -177,17 +192,28 @@ final class Loan
     }
 
     /**
-     * @param TrancheId $trancheId
      * @param Investment $investment
      * @throws \Exception
      */
-    public function invest(
-        TrancheId $trancheId,
-        Investment $investment
-    ) {
+    public function invest(Investment $investment)
+    {
         if (!$this->isOpen()) {
             throw new InvestorCannotInvest(sprintf('Investor cannot invest, because loan is %s', $this->state()->toString()));
         }
-        $this->getTranche($trancheId)->invest($investment);
+        if ($this->investmentExists($investment->id())) {
+            throw new InvestmentAlreadyExists();
+        }
+        $this->getTranche($investment->trancheId())->invest($investment);
+
+        $this->investments[$investment->id()->toString()] = $investment;
+    }
+
+    /**
+     * @param InvestmentId $id
+     * @return bool
+     */
+    public function investmentExists(InvestmentId $id): bool
+    {
+        return isset($this->investments[$id->toString()]);
     }
 }

@@ -20,7 +20,7 @@ class LoanRepository implements Loans
      */
     public function get(LoanId $id): Loan
     {
-        if(!isset($this->loans[$id->toString()])) {
+        if (!isset($this->loans[$id->toString()])) {
             throw new Exception();
         }
         return $this->loans[$id->toString()];
@@ -34,4 +34,15 @@ class LoanRepository implements Loans
         $this->loans[$loan->id()->toString()] = $loan;
     }
 
+    /**
+     * @param \DateTimeImmutable $start
+     * @param \DateTimeImmutable $end
+     * @return Loan[]
+     */
+    public function getByPeriod(\DateTimeImmutable $start, \DateTimeImmutable $end): array
+    {
+        return array_filter($this->loans, function (Loan $loan) use ($start, $end) {
+            return $loan->startDate() >= $start && $loan->endDate() <= $end;
+        });
+    }
 }

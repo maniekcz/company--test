@@ -20,7 +20,7 @@ class InvestorRepository implements Investors
      */
     public function get(InvestorId $id): Investor
     {
-        if(!isset($this->investors[$id->toString()])) {
+        if (!isset($this->investors[$id->toString()])) {
             throw new Exception();
         }
         return $this->investors[$id->toString()];
@@ -33,5 +33,4 @@ class InvestorRepository implements Investors
     {
         $this->investors[$investor->id()->toString()] = $investor;
     }
-
 }

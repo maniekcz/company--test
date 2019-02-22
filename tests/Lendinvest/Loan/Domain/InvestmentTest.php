@@ -11,6 +11,7 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Tests\Lendinvest\Loan\Domain\MotherObject\InvestmentMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\InvestorMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\TrancheMother;
 
 class InvestmentTest extends TestCase
 {
@@ -22,6 +23,7 @@ class InvestmentTest extends TestCase
         $investment = InvestmentMother::withData(
             '1',
             InvestorMother::withData('2', '1000', 'GBP'),
+            TrancheMother::withId('1'),
             '1000',
             'GBP',
             '2012-10-01'
@@ -40,10 +42,10 @@ class InvestmentTest extends TestCase
         InvestmentMother::withData(
             '1',
             InvestorMother::withData('2', '100', 'GBP'),
+            TrancheMother::withId('1'),
             '1000',
             'GBP',
             '2012-10-01'
         );
-
     }
 }

@@ -28,11 +28,6 @@ class Tranche
     private $amount;
 
     /**
-     * @var Investment[]
-     */
-    private $investments;
-
-    /**
      * Tranche constructor.
      * @param TrancheId $id
      * @param int $interest
@@ -71,14 +66,6 @@ class Tranche
     }
 
     /**
-     * @return array
-     */
-    public function investments(): array
-    {
-        return $this->investments;
-    }
-
-    /**
      * @param TrancheId $id
      * @param int $interest
      * @param Money $amount
@@ -92,27 +79,13 @@ class Tranche
     /**
      * @param Investment $investment
      * @throws InvestorCannotInvest
-     * @throws InvestmentAlreadyExists
      */
     public function invest(Investment $investment)
     {
         if (!$this->isInvestable($investment->amount())) {
             throw new InvestorCannotInvest('All amount has been used for this tranche.');
         }
-        if ($this->investmentExists($investment->id())) {
-            throw new InvestmentAlreadyExists();
-        }
-        $this->investments[$investment->id()->toString()] = $investment;
         $this->amount = $this->amount->subtract($investment->amount());
-    }
-
-    /**
-     * @param InvestmentId $id
-     * @return bool
-     */
-    public function investmentExists(InvestmentId $id): bool
-    {
-        return isset($this->investments[$id->toString()]);
     }
 
     /**

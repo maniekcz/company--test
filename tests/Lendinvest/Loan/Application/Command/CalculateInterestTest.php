@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace Tests\Lendinvest\Loan\Application\Command;
 
-use Lendinvest\Common\Currency;
-use Lendinvest\Common\Money;
-use Lendinvest\Loan\Application\Command\Handler\InvestMoneyHandler;
-use Lendinvest\Loan\Application\Command\InvestMoney;
-use Lendinvest\Loan\Domain\Investor\InvestorId;
+use Lendinvest\Loan\Application\Command\CalculateInterest;
+use Lendinvest\Loan\Application\Command\Handler\CalculateInterestHandler;
 use Lendinvest\Loan\Domain\Investor\Investors;
-use Lendinvest\Loan\Domain\LoanId;
 use Lendinvest\Loan\Domain\Loans;
-use Lendinvest\Loan\Domain\Tranche\TrancheId;
 use Lendinvest\Loan\Infrastructure\InMemory\InvestorRepository;
 use Lendinvest\Loan\Infrastructure\InMemory\LoanRepository;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Tests\Lendinvest\Loan\Domain\MotherObject\InvestmentMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\InvestorMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\LoanMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\TrancheMother;
 
-class InvestMoneyTest extends TestCase
+class CalculateInterestTest extends TestCase
 {
     /**
      * @var Loans
@@ -34,7 +30,7 @@ class InvestMoneyTest extends TestCase
     private $investors;
 
     /**
-     * @var InvestMoneyHandler
+     * @var CalculateInterestHandler
      */
     private $handler;
 
@@ -42,7 +38,7 @@ class InvestMoneyTest extends TestCase
     {
         $this->loans = new LoanRepository();
         $this->investors = new InvestorRepository();
-        $this->handler = new InvestMoneyHandler($this->loans, $this->investors);
+        $this->handler = new CalculateInterestHandler($this->loans, $this->investors);
     }
 
     /**
@@ -51,23 +47,27 @@ class InvestMoneyTest extends TestCase
     public function when_loan_and_invester_are_created_then_invester_can_invest()
     {
         $investor = InvestorMother::withData('1', '1000', 'GBP');
-        $loan = LoanMother::withData('1', '2012-12-12', '2012-12-12');
+        $loan = LoanMother::withData('1', '2012-12-01', '2012-12-12');
         $tranche = TrancheMother::withData('1', 3, '1000', 'GBP');
         $loan->addTranche($tranche);
         $loan->open();
 
+        $investment = InvestmentMother::withData(
+            '1',
+            $investor,
+            $tranche,
+            '1000',
+            'GBP',
+            '2012-12-03'
+        );
+        $loan->invest($investment);
         $this->investors->save($investor);
         $this->loans->save($loan);
 
-        $command = new InvestMoney('1', '1000', '2012-12-12', 'GBP', '1', '1', '1');
+        $command = new CalculateInterest('2012-12-01', '2012-12-12');
         $this->handler->__invoke($command);
 
-        $investor = $this->investors->get(InvestorId::fromString('1'));
-        $loan = $this->loans->get(LoanId::fromString('1'));
-        $tranche = $loan->getTranche(TrancheId::fromString('1'));
-
-        $emptyAmount = new Money('0', new Currency('GBP'));
-        Assert::assertTrue($tranche->amount()->equals($emptyAmount));
-        Assert::assertTrue($investor->balance()->equals($emptyAmount));
+        $investor = $this->investors->get($investor->id());
+        var_dump($investor->balance());
     }
 }

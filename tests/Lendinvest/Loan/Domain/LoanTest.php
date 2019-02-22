@@ -6,6 +6,7 @@ namespace Tests\Lendinvest\Loan\Domain;
 
 use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
+use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
@@ -128,13 +129,14 @@ class LoanTest extends TestCase
         $investment = InvestmentMother::withData(
             '1',
             InvestorMother::withData('2', '1000', 'GBP'),
+            $tranche,
             '1000',
             'GBP',
             '2015-10-03'
         );
-        $loan->invest($trancheId, $investment);
+        $loan->invest($investment);
 
-        Assert::assertCount(1, $loan->getTranche($trancheId)->investments());
+        Assert::assertCount(1, $loan->investments());
         Assert::assertTrue($loan->getTranche($trancheId)->amount()->equals(MoneyMother::withData('0.00', 'GBP')));
     }
 
@@ -150,13 +152,14 @@ class LoanTest extends TestCase
         $investment = InvestmentMother::withData(
             '1',
             InvestorMother::withData('2', '1000', 'GBP'),
+            $tranche,
             '1000',
             'GBP',
             '2015-10-03'
         );
 
         $this->expectException(InvestorCannotInvest::class);
-        $loan->invest($trancheId, $investment);
+        $loan->invest($investment);
     }
 
     /**
@@ -172,20 +175,45 @@ class LoanTest extends TestCase
         $investment = InvestmentMother::withData(
             '1',
             InvestorMother::withData('2', '1000', 'GBP'),
+            $tranche,
             '1000',
             'GBP',
             '2015-10-03'
         );
-        $loan->invest($trancheId, $investment);
+        $loan->invest($investment);
         $investment = InvestmentMother::withData(
-            '1',
+            '2',
             InvestorMother::withData('2', '1000', 'GBP'),
+            $tranche,
             '1000',
             'GBP',
             '2015-10-03'
         );
 
         $this->expectException(InvestorCannotInvest::class);
-        $loan->invest($trancheId, $investment);
+        $loan->invest($investment);
+    }
+
+    /**
+     * @test
+     */
+    public function when_tranche_is_invested_then_the_same_investment_cannot_be_added()
+    {
+        $loan =  LoanMother::withId('1');
+        $trancheId = TrancheId::fromString('1');
+        $tranche = $tranche = TrancheMother::withData($trancheId->toString(), 3, '1000', 'GBP');
+        $loan->addTranche($tranche);
+        $loan->open();
+        $investment = InvestmentMother::withData(
+            '1',
+            InvestorMother::withData('2', '1000', 'GBP'),
+            $tranche,
+            '1000',
+            'GBP',
+            '2015-10-03'
+        );
+        $loan->invest($investment);
+        $this->expectException(InvestmentAlreadyExists::class);
+        $loan->invest($investment);
     }
 }

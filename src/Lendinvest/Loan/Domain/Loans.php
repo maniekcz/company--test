@@ -7,4 +7,5 @@ interface Loans
 {
     public function get(LoanId $id): Loan;
     public function save(Loan $loan);
+    public function getByPeriod(\DateTimeImmutable $start, \DateTimeImmutable $end);
 }

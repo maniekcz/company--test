@@ -35,11 +35,12 @@ class InvestMoneyHandler
         $investment = Investment::create(
             $command->investmentId(),
             $investor,
+            $loan->getTranche($command->trancheId()),
             $command->amount(),
             $command->created()
         );
 
-        $loan->invest($command->trancheId(), $investment);
+        $loan->invest($investment);
         $investor->invest($command->amount());
 
         $this->investors->save($investor);
