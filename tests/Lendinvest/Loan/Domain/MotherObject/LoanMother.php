@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Lendinvest\Loan\MotherObject;
+namespace Tests\Lendinvest\Loan\Domain\MotherObject;
 
 use DateTimeImmutable;
 use Lendinvest\Loan\Domain\Loan;

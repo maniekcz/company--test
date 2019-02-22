@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Lendinvest\Common\MotherObject;
 
-use Lendinvest\Common\Currency;
 use Lendinvest\Common\Money;
 
 class MoneyMother

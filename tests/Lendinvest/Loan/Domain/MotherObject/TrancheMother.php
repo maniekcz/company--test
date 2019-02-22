@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Lendinvest\Loan\MotherObject;
+namespace Tests\Lendinvest\Loan\Domain\MotherObject;
 
 use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;

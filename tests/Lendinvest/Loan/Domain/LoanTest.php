@@ -2,29 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Tests\Lendinvest\Loan;
+namespace Tests\Lendinvest\Loan\Domain;
 
-use DateTimeImmutable;
-use Lendinvest\Common\Currency;
-use Lendinvest\Common\Money;
 use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
-use Lendinvest\Loan\Domain\Investment\Investment;
-use Lendinvest\Loan\Domain\Investment\InvestmentId;
-use Lendinvest\Loan\Domain\Investor\Investor;
-use Lendinvest\Loan\Domain\Investor\InvestorId;
 use Lendinvest\Loan\Domain\StateLoan;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Tests\Lendinvest\Common\MotherObject\MoneyMother;
-use Tests\Lendinvest\Loan\MotherObject\InvestmentMother;
-use Tests\Lendinvest\Loan\MotherObject\InvestorMother;
-use Tests\Lendinvest\Loan\MotherObject\LoanMother;
-use Tests\Lendinvest\Loan\MotherObject\TrancheMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\InvestmentMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\InvestorMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\LoanMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\TrancheMother;
 
 class LoanTest extends TestCase
 {

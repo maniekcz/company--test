@@ -29,7 +29,7 @@ class Money
      */
     public function __construct(string $amount, Currency $currency, int $scale = 2)
     {
-        $this->amount = $amount;
+        $this->amount = bcadd($amount, '0.00', $scale);
         $this->currency = $currency;
         $this->scale = $scale;
     }

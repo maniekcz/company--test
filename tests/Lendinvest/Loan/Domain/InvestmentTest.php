@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tests\Lendinvest\Loan;
+namespace Tests\Lendinvest\Loan\Domain;
 
+use Lendinvest\Common\Currency;
+use Lendinvest\Common\Money;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
-use Lendinvest\Loan\Domain\Investor\Investor;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use Tests\Lendinvest\Loan\MotherObject\InvestmentMother;
-use Tests\Lendinvest\Loan\MotherObject\InvestorMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\InvestmentMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\InvestorMother;
 
 class InvestmentTest extends TestCase
 {
@@ -26,7 +27,7 @@ class InvestmentTest extends TestCase
             '2012-10-01'
         );
         Assert::assertEquals('1', $investment->id()->toString());
-        Assert::assertEquals('1000', $investment->amount()->getAmount());
+        Assert::assertTrue($investment->amount()->equals(new Money('1000', new Currency('GBP'))));
         Assert::assertEquals(new \DateTimeImmutable('2012-10-01'), $investment->created());
     }
 

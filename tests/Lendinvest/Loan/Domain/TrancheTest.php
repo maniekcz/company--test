@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tests\Lendinvest\Loan;
+namespace Tests\Lendinvest\Loan\Domain;
 
+use Lendinvest\Common\Currency;
+use Lendinvest\Common\Money;
 use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use Tests\Lendinvest\Loan\MotherObject\InvestmentMother;
-use Tests\Lendinvest\Loan\MotherObject\InvestorMother;
-use Tests\Lendinvest\Loan\MotherObject\TrancheMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\InvestmentMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\InvestorMother;
+use Tests\Lendinvest\Loan\Domain\MotherObject\TrancheMother;
 
 class TrancheTest extends TestCase
 {
@@ -23,7 +25,7 @@ class TrancheTest extends TestCase
         $amount = '100';
         $tranche = TrancheMother::withData($trancheId, $interest, $amount, 'GBP');
         Assert::assertEquals($interest, $tranche->interest());
-        Assert::assertEquals($amount, $tranche->amount()->getAmount());
+        Assert::assertTrue($tranche->amount()->equals(new Money($amount, new Currency('GBP'))));
         Assert::assertEquals((string) $trancheId, (string) $tranche->id());
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Domain\Investor;
 
 use Lendinvest\Common\Money;
+use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 
 class Investor
 {
@@ -39,6 +40,14 @@ class Investor
     }
 
     /**
+     * @return Money
+     */
+    public function balance(): Money
+    {
+        return $this->balance;
+    }
+
+    /**
      * @param InvestorId $id
      * @param Money $balance
      * @return Investor
@@ -46,6 +55,18 @@ class Investor
     public static function create(InvestorId $id, Money $balance): Investor
     {
         return new self($id, $balance);
+    }
+
+    /**
+     * @param Money $amount
+     * @throws InvestorCannotInvest
+     */
+    public function invest(Money $amount)
+    {
+        if (!$this->canInvest($amount)) {
+            throw new InvestorCannotInvest(sprintf('Investor has not enough money, needs at least %s %s', $amount->getAmount(), $amount->currency()->getCode()));
+        }
+        $this->balance = $this->balance->subtract($amount);
     }
 
     /**
