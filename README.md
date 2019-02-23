@@ -4,7 +4,7 @@
 
 This is coding test
 
-If you run test please type command below:
+If you run test please execute command below:
 
 ```bash
 $ composer test

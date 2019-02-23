@@ -63,7 +63,7 @@ class InterestCalculator
     {
         $days = $this->calculateDaysInMonth();
         $interest = $this->loan->getTranche($this->investment->trancheId())->interest();
-        if($this->startInTheSameMonth()) {
+        if ($this->startInTheSameMonth()) {
             $daysNew = $days - ((int) $this->investment->created()->format('j') - 1);
             $interest = bcdiv(bcmul((string) $interest, (string)$daysNew, 4), (string) $days, 4);
         }
