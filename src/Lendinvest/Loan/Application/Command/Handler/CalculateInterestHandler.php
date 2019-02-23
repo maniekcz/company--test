@@ -46,7 +46,7 @@ class CalculateInterestHandler
                 $investor = $this->investors->get($investment->investorId());
                 $interest = $this->calculator->calculate($loan, $investment);
                 $investment->close();
-                $investor->increaseBalance(MoneyMother::withAmount($interest));
+                $investor->increaseBalance($interest);
                 $this->investors->save($investor);
             }
             $this->loans->save($loan);

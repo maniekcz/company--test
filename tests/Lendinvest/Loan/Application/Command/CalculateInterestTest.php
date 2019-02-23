@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Lendinvest\Loan\Application\Command;
 
+use Lendinvest\Common\Money;
 use Lendinvest\Loan\Application\Command\CalculateInterest;
 use Lendinvest\Loan\Application\Command\Handler\CalculateInterestHandler;
 use Lendinvest\Loan\Domain\InterestCalculator;
@@ -15,6 +16,7 @@ use Lendinvest\Loan\Infrastructure\InMemory\LoanRepository;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Tests\Lendinvest\Common\MotherObject\MoneyMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\InvestmentMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\InvestorMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\LoanMother;
@@ -72,7 +74,7 @@ class CalculateInterestTest extends TestCase
         $loan->invest($investment);
         $this->investors->save($investor);
         $this->loans->save($loan);
-        $this->calculator->method('calculate')->willReturn('100');
+        $this->calculator->method('calculate')->willReturn(MoneyMother::withData('100', 'GBP'));
         $command = new CalculateInterest('2012-12-01', '2012-12-12');
         $this->handler->__invoke($command);
         Assert::assertTrue($investment->state()->equals(StateInvestment::CLOSED()));
@@ -100,7 +102,7 @@ class CalculateInterestTest extends TestCase
         $loan->invest($investment);
         $this->investors->save($investor);
         $this->loans->save($loan);
-        $this->calculator->method('calculate')->willReturn('100');
+        $this->calculator->method('calculate')->willReturn(MoneyMother::withData('100', 'GBP'));
         $command = new CalculateInterest('2012-12-01', '2012-12-12');
         $this->handler->__invoke($command);
 

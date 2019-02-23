@@ -153,9 +153,9 @@ class ScenarioFromTest extends TestCase
 
         //“Investor 1” earns 28.06 pounds
         $investor = $this->investors->get(InvestorId::fromString('1'));
-        Assert::assertTrue($investor->balance()->equals(new Money('28.06', new Currency('GBP'))));
+        Assert::assertTrue($investor->balance()->equals(new Money('1028.06', new Currency('GBP'))));
         //“Investor 3” earns 21.29 pounds
         $investor = $this->investors->get(InvestorId::fromString('3'));
-        Assert::assertTrue($investor->balance()->equals(new Money('521.29', new Currency('GBP'))));
+        Assert::assertTrue($investor->balance()->equals(new Money('1021.29', new Currency('GBP'))));
     }
 }

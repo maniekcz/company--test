@@ -12,7 +12,6 @@ use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
-use Lendinvest\Loan\Domain\Investment\CalculateInterest;
 use Lendinvest\Loan\Domain\Investment\Investment;
 use Lendinvest\Loan\Domain\Investment\InvestmentId;
 use Lendinvest\Loan\Domain\Investment\StateInvestment;

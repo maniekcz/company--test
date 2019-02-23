@@ -25,7 +25,7 @@ class LoanTest extends TestCase
     /**
      * @test
      */
-    public function when_data_is_correct_then_loan_can_be_create()
+    public function when_data_is_correct_then_loan_can_be_created()
     {
         $loanId = '1';
         $startDate = '2015-10-01';
@@ -40,7 +40,7 @@ class LoanTest extends TestCase
     /**
      * @test
      */
-    public function when_dates_are_wrong_then_loan_cannot_be_create()
+    public function when_dates_are_wrong_then_loan_cannot_be_created()
     {
         $this->expectException(DateIsWrong::class);
         LoanMother::withData('1', '2015-12-1', '2015-11-15');
@@ -49,7 +49,7 @@ class LoanTest extends TestCase
     /**
      * @test
      */
-    public function when_loan_is_created_then_tranche_can_be_add()
+    public function when_loan_is_created_then_tranche_can_be_added()
     {
         $trancheId = '1';
         $loan = LoanMother::withId('1');
@@ -61,7 +61,7 @@ class LoanTest extends TestCase
     /**
      * @test
      */
-    public function when_loan_is_created_and_tranche_is_added_then_the_same_tranche_cannot_be_add()
+    public function when_loan_is_created_and_tranche_is_added_then_the_same_tranche_cannot_be_added()
     {
         $loan = LoanMother::withId('1');
         $tranche =  TrancheMother::withId('1');
@@ -73,7 +73,7 @@ class LoanTest extends TestCase
     /**
      * @test
      */
-    public function when_loan_is_created_and_tranche_is_added_then_loan_can_be_open()
+    public function when_loan_is_created_and_tranche_is_added_then_loan_can_be_opened()
     {
         $loan = LoanMother::withId('1');
         $tranche = TrancheMother::withId('1');
@@ -85,7 +85,7 @@ class LoanTest extends TestCase
     /**
      * @test
      */
-    public function when_loan_is_created_and_tranche_is_not_added_then_loan_cannot_be_open()
+    public function when_loan_is_created_and_tranche_is_not_added_then_loan_cannot_be_opened()
     {
         $loan = LoanMother::withId('1');
         $this->expectException(TrancheIsNotDefined::class);
@@ -95,7 +95,7 @@ class LoanTest extends TestCase
     /**
      * @test
      */
-    public function when_loan_is_created_and_tranche_is_not_added_then_tranche_cannot_be_fetch()
+    public function when_loan_is_created_and_tranche_is_not_added_then_tranche_cannot_be_fetched()
     {
         $loan = LoanMother::withId('1');
         $this->expectException(TrancheIsNotDefined::class);
@@ -105,7 +105,7 @@ class LoanTest extends TestCase
     /**
      * @test
      */
-    public function when_loan_is_created_and_open_and_tranche_is_added_then_loan_cannot_be_open()
+    public function when_loan_is_created_and_open_and_tranche_is_added_then_loan_cannot_be_opened()
     {
         $loan =  LoanMother::withId('1');
         $tranche = TrancheMother::withId('1');
