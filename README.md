@@ -4,13 +4,13 @@
 
 This is coding test
 
-If you would run test please run command below:
+If you run test please type command below:
 
 ```bash
 $ composer test
 ```
 
-If your environment is not prepared to launch tests you can use docker
+If your environment is't prepared to launch tests you can use docker
 
 ```bash
 $ docker-compose run composer install
