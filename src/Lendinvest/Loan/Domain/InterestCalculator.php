@@ -7,7 +7,7 @@ namespace Lendinvest\Loan\Domain;
 use Lendinvest\Common\Money;
 use Lendinvest\Loan\Domain\Investment\Investment;
 
-class InterestCalculator
+class InterestCalculator implements Calculator
 {
     /**
      * @var Loan

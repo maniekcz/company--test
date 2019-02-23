@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Application\Command\Handler;
 
 use Lendinvest\Loan\Application\Command\CalculateInterest;
-use Lendinvest\Loan\Domain\InterestCalculator;
+use Lendinvest\Loan\Domain\Calculator;
 use Lendinvest\Loan\Domain\Investment\Investment;
 use Lendinvest\Loan\Domain\Investor\Investors;
 use Lendinvest\Loan\Domain\Loan;
 use Lendinvest\Loan\Domain\Loans;
-use Tests\Lendinvest\Common\MotherObject\MoneyMother;
 
 class CalculateInterestHandler
 {
@@ -25,11 +24,11 @@ class CalculateInterestHandler
     private $investors;
 
     /**
-     * @var InterestCalculator
+     * @var Calculator
      */
     private $calculator;
 
-    public function __construct(Loans $loans, Investors $investors, InterestCalculator $calculator)
+    public function __construct(Loans $loans, Investors $investors, Calculator $calculator)
     {
         $this->loans = $loans;
         $this->investors = $investors;
