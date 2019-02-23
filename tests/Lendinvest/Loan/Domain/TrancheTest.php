@@ -18,7 +18,7 @@ class TrancheTest extends TestCase
     public function when_data_is_correct_then_tranche_can_be_create()
     {
         $trancheId = '1';
-        $interest = 3;
+        $interest = '3';
         $amount = '100';
         $tranche = TrancheMother::withData($trancheId, $interest, $amount, 'GBP');
         Assert::assertEquals($interest, $tranche->interest());

@@ -6,7 +6,6 @@ namespace Lendinvest\Loan\Domain\Investor;
 
 use Lendinvest\Common\Identify;
 
-class InvestorId
+class InvestorId extends Identify
 {
-    use Identify;
 }

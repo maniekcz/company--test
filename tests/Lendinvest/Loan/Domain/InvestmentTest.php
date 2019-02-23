@@ -6,6 +6,7 @@ namespace Tests\Lendinvest\Loan\Domain;
 
 use Lendinvest\Common\Currency;
 use Lendinvest\Common\Money;
+use Lendinvest\Loan\Domain\Exception\InvestmentCannotBeClosed;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
@@ -47,5 +48,23 @@ class InvestmentTest extends TestCase
             'GBP',
             '2012-10-01'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function when_investment_is_closed_then_investment_cannot_be_close()
+    {
+        $investment = InvestmentMother::withData(
+            '1',
+            InvestorMother::withData('2', '1000', 'GBP'),
+            TrancheMother::withId('1'),
+            '1000',
+            'GBP',
+            '2012-10-01'
+        );
+        $investment->close();
+        $this->expectException(InvestmentCannotBeClosed::class);
+        $investment->close();
     }
 }

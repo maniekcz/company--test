@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Domain;
 
 use DateTimeImmutable;
+use Lendinvest\Loan\Domain\Exception\CannotClosedLoan;
 use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use Lendinvest\Loan\Domain\Exception\TrancheAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
+use Lendinvest\Loan\Domain\Investment\CalculateInterest;
 use Lendinvest\Loan\Domain\Investment\Investment;
 use Lendinvest\Loan\Domain\Investment\InvestmentId;
+use Lendinvest\Loan\Domain\Investment\StateInvestment;
 use Lendinvest\Loan\Domain\Tranche\Tranche;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 
@@ -133,6 +136,19 @@ final class Loan
         return new self($id, $startDate, $endDate);
     }
 
+
+    /**
+     * @throws CannotClosedLoan
+     */
+    public function close()
+    {
+        if (!$this->state->equals(StateLoan::OPEN())) {
+            throw new CannotClosedLoan(sprintf('Loan cannot be closed, because is %s', $this->state));
+        }
+
+        $this->state = StateLoan::CLOSED();
+    }
+
     /**
      * @throws CannotOpenLoan
      * @throws TrancheIsNotDefined
@@ -189,6 +205,16 @@ final class Loan
     public function isOpen(): bool
     {
         return $this->state()->equals(StateLoan::OPEN());
+    }
+
+    /**
+     * @return array
+     */
+    public function getNewInvestments(): array
+    {
+        return array_filter($this->investments, function (Investment $investment) {
+            return $investment->state()->equals(StateInvestment::NEW());
+        });
     }
 
     /**

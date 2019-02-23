@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Application\Command\Handler;
 
 use Lendinvest\Loan\Application\Command\InvestMoney;
+use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
+use Lendinvest\Loan\Domain\Exception\TrancheIsNotDefined;
 use Lendinvest\Loan\Domain\Investment\Investment;
 use Lendinvest\Loan\Domain\Investor\Investors;
 use Lendinvest\Loan\Domain\Loans;
@@ -27,6 +29,11 @@ class InvestMoneyHandler
         $this->investors = $investors;
     }
 
+    /**
+     * @param InvestMoney $command
+     * @throws InvestorCannotInvest
+     * @throws TrancheIsNotDefined
+     */
     public function __invoke(InvestMoney $command)
     {
         $loan = $this->loans->get($command->loanId());

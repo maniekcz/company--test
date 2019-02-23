@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Application\Command\Handler;
 
 use Lendinvest\Loan\Application\Command\CalculateInterest;
+use Lendinvest\Loan\Domain\InterestCalculator;
 use Lendinvest\Loan\Domain\Investment\Investment;
-use Lendinvest\Loan\Domain\Investor\InvestorId;
 use Lendinvest\Loan\Domain\Investor\Investors;
 use Lendinvest\Loan\Domain\Loan;
 use Lendinvest\Loan\Domain\Loans;
@@ -24,10 +24,16 @@ class CalculateInterestHandler
      */
     private $investors;
 
-    public function __construct(Loans $loans, Investors $investors)
+    /**
+     * @var InterestCalculator
+     */
+    private $calculator;
+
+    public function __construct(Loans $loans, Investors $investors, InterestCalculator $calculator)
     {
         $this->loans = $loans;
         $this->investors = $investors;
+        $this->calculator = $calculator;
     }
 
     public function __invoke(CalculateInterest $command)
@@ -35,20 +41,15 @@ class CalculateInterestHandler
         $loans = $this->loans->getByPeriod($command->start(), $command->end());
         /** @var Loan $loan */
         foreach ($loans as $loan) {
-            array_map(function (Investment $investment) use ($loan) {
-                $invested = $investment->created();
-                $loanStartDate = $loan->startDate();
-                $interest = $loan->getTranche($investment->trancheId())->interest();
-                $days = cal_days_in_month(CAL_GREGORIAN, (int) $invested->format('m'), (int) $invested->format('Y'));
-                if (!$loanStartDate->diff($invested)->m) {
-                    $daysNew = $days - ((int) $invested->format('j') - 1);
-                    $interest = bcdiv(bcmul((string) $interest, (string)$daysNew, 2), (string) $days, 2);
-                }
-                $total = bcmul(bcdiv((string) $interest, '100', 5), $investment->amount()->getAmount(), 2);
+            /** @var Investment $investment */
+            foreach ($loan->getNewInvestments() as $investment) {
                 $investor = $this->investors->get($investment->investorId());
-                $investor->increaseBalance(MoneyMother::withAmount($total));
+                $interest = $this->calculator->calculate($loan, $investment);
+                $investment->close();
+                $investor->increaseBalance(MoneyMother::withAmount($interest));
                 $this->investors->save($investor);
-            }, $loan->investments());
+            }
+            $this->loans->save($loan);
         }
     }
 }

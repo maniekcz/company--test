@@ -21,7 +21,7 @@ class InvestorRepository implements Investors
     public function get(InvestorId $id): Investor
     {
         if (!isset($this->investors[$id->toString()])) {
-            throw new Exception();
+            throw new Exception('Investor doesn\t exist');
         }
         return $this->investors[$id->toString()];
     }

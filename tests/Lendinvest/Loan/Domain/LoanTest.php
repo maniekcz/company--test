@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Lendinvest\Loan\Domain;
 
+use Lendinvest\Loan\Domain\Exception\CannotClosedLoan;
 use Lendinvest\Loan\Domain\Exception\CannotOpenLoan;
 use Lendinvest\Loan\Domain\Exception\DateIsWrong;
 use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
@@ -14,7 +15,6 @@ use Lendinvest\Loan\Domain\StateLoan;
 use Lendinvest\Loan\Domain\Tranche\TrancheId;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use Tests\Lendinvest\Common\MotherObject\MoneyMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\InvestmentMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\InvestorMother;
 use Tests\Lendinvest\Loan\Domain\MotherObject\LoanMother;
@@ -122,7 +122,7 @@ class LoanTest extends TestCase
     {
         $loan =  LoanMother::withId('1');
         $trancheId = TrancheId::fromString('1');
-        $tranche = TrancheMother::withData($trancheId->toString(), 3, '1000', 'GBP');
+        $tranche = TrancheMother::withData($trancheId->toString(), '3', '1000', 'GBP');
         $loan->addTranche($tranche);
         $loan->open();
 
@@ -137,7 +137,7 @@ class LoanTest extends TestCase
         $loan->invest($investment);
 
         Assert::assertCount(1, $loan->investments());
-        Assert::assertTrue($loan->getTranche($trancheId)->amount()->equals(MoneyMother::withData('0.00', 'GBP')));
+        Assert::assertTrue($loan->getTranche($trancheId)->amount()->isZero());
     }
 
     /**
@@ -147,7 +147,7 @@ class LoanTest extends TestCase
     {
         $loan =  LoanMother::withId('1');
         $trancheId = TrancheId::fromString('1');
-        $tranche = TrancheMother::withData($trancheId->toString(), 3, '1000', 'GBP');
+        $tranche = TrancheMother::withData($trancheId->toString(), '3', '1000', 'GBP');
         $loan->addTranche($tranche);
         $investment = InvestmentMother::withData(
             '1',
@@ -169,7 +169,7 @@ class LoanTest extends TestCase
     {
         $loan =  LoanMother::withId('1');
         $trancheId = TrancheId::fromString('1');
-        $tranche = $tranche = TrancheMother::withData($trancheId->toString(), 3, '1000', 'GBP');
+        $tranche = $tranche = TrancheMother::withData($trancheId->toString(), '3', '1000', 'GBP');
         $loan->addTranche($tranche);
         $loan->open();
         $investment = InvestmentMother::withData(
@@ -201,7 +201,7 @@ class LoanTest extends TestCase
     {
         $loan =  LoanMother::withId('1');
         $trancheId = TrancheId::fromString('1');
-        $tranche = $tranche = TrancheMother::withData($trancheId->toString(), 3, '1000', 'GBP');
+        $tranche = $tranche = TrancheMother::withData($trancheId->toString(), '3', '1000', 'GBP');
         $loan->addTranche($tranche);
         $loan->open();
         $investment = InvestmentMother::withData(
@@ -215,5 +215,21 @@ class LoanTest extends TestCase
         $loan->invest($investment);
         $this->expectException(InvestmentAlreadyExists::class);
         $loan->invest($investment);
+    }
+
+    /**
+     * @test
+     */
+    public function when_loan_is_closed_then_loan_cannot_be_close()
+    {
+        $loan =  LoanMother::withId('1');
+        $trancheId = TrancheId::fromString('1');
+        $tranche = $tranche = TrancheMother::withData($trancheId->toString(), '3', '1000', 'GBP');
+        $loan->addTranche($tranche);
+        $loan->open();
+        $loan->close();
+        ;
+        $this->expectException(CannotClosedLoan::class);
+        $loan->close();
     }
 }

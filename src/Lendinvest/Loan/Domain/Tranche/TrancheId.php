@@ -6,7 +6,6 @@ namespace Lendinvest\Loan\Domain\Tranche;
 
 use Lendinvest\Common\Identify;
 
-class TrancheId
+class TrancheId extends Identify
 {
-    use Identify;
 }

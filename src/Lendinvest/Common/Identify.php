@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Lendinvest\Common;
 
-trait Identify
+abstract class Identify
 {
     /**
      * @var string
@@ -35,9 +35,9 @@ trait Identify
 
     /**
      * @param string $value
-     * @return self
+     * @return static
      */
-    public static function fromString(string $value): self
+    public static function fromString(string $value)
     {
         return new static($value);
     }

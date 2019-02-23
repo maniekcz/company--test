@@ -49,7 +49,7 @@ class InvestMoney
      */
     private $created;
 
-    public function __construct(string $investmentId, string $amount, string $created, string $currency, string $investorId, string $loanId, string $trancheId)
+    public function __construct(string $investmentId, string $amount, string $currency, string $created, string $investorId, string $loanId, string $trancheId)
     {
         $this->investmentId = $investmentId;
         $this->amount = $amount;

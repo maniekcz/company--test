@@ -151,4 +151,12 @@ class Money
     {
         return $this->compare($other) <= 0;
     }
+
+    /**
+     * @return bool
+     */
+    public function isZero()
+    {
+        return $this->amount === '0.00';
+    }
 }

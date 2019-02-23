@@ -18,19 +18,19 @@ class TrancheMother
     {
         return Tranche::create(
             TrancheId::fromString($id),
-            3,
+            '3',
             MoneyMother::correct()
         );
     }
 
     /**
      * @param string $id
-     * @param int $interest
+     * @param string $interest
      * @param string $amount
      * @param string $currency
      * @return Tranche
      */
-    public static function withData(string $id, int $interest, string $amount, string $currency) : Tranche
+    public static function withData(string $id, string $interest, string $amount, string $currency) : Tranche
     {
         return Tranche::create(
             TrancheId::fromString($id),

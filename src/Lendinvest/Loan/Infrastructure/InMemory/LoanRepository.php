@@ -21,7 +21,7 @@ class LoanRepository implements Loans
     public function get(LoanId $id): Loan
     {
         if (!isset($this->loans[$id->toString()])) {
-            throw new Exception();
+            throw new Exception('Loan doesn\'t exist');
         }
         return $this->loans[$id->toString()];
     }
@@ -42,7 +42,7 @@ class LoanRepository implements Loans
     public function getByPeriod(\DateTimeImmutable $start, \DateTimeImmutable $end): array
     {
         return array_filter($this->loans, function (Loan $loan) use ($start, $end) {
-            return $loan->startDate() >= $start && $loan->endDate() <= $end;
+            return $loan->startDate() >= $start && $loan->endDate() >= $end;
         });
     }
 }

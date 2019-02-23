@@ -48,26 +48,51 @@ class InvestMoneyTest extends TestCase
     /**
      * @test
      */
-    public function when_loan_and_invester_are_created_then_invester_can_invest()
+    public function when_loan_and_investor_are_created_then_investor_can_invest()
     {
         $investor = InvestorMother::withData('1', '1000', 'GBP');
         $loan = LoanMother::withData('1', '2012-12-12', '2012-12-12');
-        $tranche = TrancheMother::withData('1', 3, '1000', 'GBP');
+        $tranche = TrancheMother::withData('1', '3', '1000', 'GBP');
         $loan->addTranche($tranche);
         $loan->open();
 
         $this->investors->save($investor);
         $this->loans->save($loan);
 
-        $command = new InvestMoney('1', '1000', '2012-12-12', 'GBP', '1', '1', '1');
+        $command = new InvestMoney('1', '1000', 'GBP', '2012-12-12', '1', '1', '1');
         $this->handler->__invoke($command);
 
         $investor = $this->investors->get(InvestorId::fromString('1'));
         $loan = $this->loans->get(LoanId::fromString('1'));
         $tranche = $loan->getTranche(TrancheId::fromString('1'));
 
-        $emptyAmount = new Money('0', new Currency('GBP'));
-        Assert::assertTrue($tranche->amount()->equals($emptyAmount));
-        Assert::assertTrue($investor->balance()->equals($emptyAmount));
+        Assert::assertTrue($tranche->amount()->isZero());
+        Assert::assertTrue($investor->balance()->isZero());
+    }
+
+    /**
+     * @test
+     */
+    public function when_loan_not_exists_then_investor_cannot_invest()
+    {
+        $this->expectException(\Exception::class);
+        $command = new InvestMoney('1', '1000', 'GBP', '2012-12-12', '1', '1', '1');
+        $this->handler->__invoke($command);
+    }
+
+    /**
+     * @test
+     */
+    public function when_investor_not_exists_then_investor_cannot_invest()
+    {
+        $loan = LoanMother::withData('1', '2012-12-12', '2012-12-12');
+        $tranche = TrancheMother::withData('1', '3', '1000', 'GBP');
+        $loan->addTranche($tranche);
+        $loan->open();
+        $this->loans->save($loan);
+
+        $this->expectException(\Exception::class);
+        $command = new InvestMoney('1', '1000', 'GBP', '2012-12-12', '1', '1', '1');
+        $this->handler->__invoke($command);
     }
 }

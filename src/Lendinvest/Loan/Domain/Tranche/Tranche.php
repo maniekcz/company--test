@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Lendinvest\Loan\Domain\Tranche;
 
 use Lendinvest\Common\Money;
-use Lendinvest\Loan\Domain\Exception\InvestmentAlreadyExists;
 use Lendinvest\Loan\Domain\Exception\InvestorCannotInvest;
 use Lendinvest\Loan\Domain\Investment\Investment;
-use Lendinvest\Loan\Domain\Investment\InvestmentId;
 
 class Tranche
 {
@@ -18,7 +16,7 @@ class Tranche
     private $id;
 
     /**
-     * @var int
+     * @var string
      */
     private $interest;
 
@@ -30,10 +28,10 @@ class Tranche
     /**
      * Tranche constructor.
      * @param TrancheId $id
-     * @param int $interest
+     * @param string $interest
      * @param Money $amount
      */
-    public function __construct(TrancheId $id, int $interest, Money $amount)
+    public function __construct(TrancheId $id, string $interest, Money $amount)
     {
         $this->id = $id;
         $this->interest = $interest;
@@ -50,9 +48,9 @@ class Tranche
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function interest(): int
+    public function interest(): string
     {
         return $this->interest;
     }
@@ -67,11 +65,11 @@ class Tranche
 
     /**
      * @param TrancheId $id
-     * @param int $interest
+     * @param string $interest
      * @param Money $amount
      * @return Tranche
      */
-    public static function create(TrancheId $id, int $interest, Money $amount): Tranche
+    public static function create(TrancheId $id, string $interest, Money $amount): Tranche
     {
         return new self($id, $interest, $amount);
     }

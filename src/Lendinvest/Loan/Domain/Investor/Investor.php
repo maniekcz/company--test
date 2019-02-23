@@ -59,13 +59,9 @@ class Investor
 
     /**
      * @param Money $amount
-     * @throws InvestorCannotInvest
      */
     public function invest(Money $amount)
     {
-        if (!$this->canInvest($amount)) {
-            throw new InvestorCannotInvest(sprintf('Investor has not enough money, needs at least %s %s', $amount->getAmount(), $amount->currency()->getCode()));
-        }
         $this->balance = $this->balance->subtract($amount);
     }
 
