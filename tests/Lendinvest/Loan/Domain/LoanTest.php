@@ -228,7 +228,6 @@ class LoanTest extends TestCase
         $loan->addTranche($tranche);
         $loan->open();
         $loan->close();
-        ;
         $this->expectException(CannotClosedLoan::class);
         $loan->close();
     }
