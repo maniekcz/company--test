@@ -1,6 +1,6 @@
 # Lendinvest test
 
-[![Build Status](https://travis-ci.org/maniekcz/rst-rabbit.svg?branch=master)](https://travis-ci.org/maniekcz/rst-rabbit)
+[![Build Status](https://travis-ci.com/maniekcz/lendinvest--test.svg?branch=master)](https://travis-ci.com/maniekcz/lendinvest--test)
 
 This is coding test
 
