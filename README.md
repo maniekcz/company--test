@@ -1,6 +1,6 @@
-# Lendinvest test
+# comapny test
 
-[![Build Status](https://travis-ci.com/maniekcz/lendinvest--test.svg?branch=master)](https://travis-ci.com/maniekcz/lendinvest--test)
+[![Build Status](https://travis-ci.com/maniekcz/company--test.svg?branch=master)](https://travis-ci.com/maniekcz/company--test)
 
 This is coding test
 
