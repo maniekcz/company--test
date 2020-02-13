@@ -1,7 +1,5 @@
 # comapny test
 
-[![Build Status](https://travis-ci.com/maniekcz/company--test.svg?branch=master)](https://travis-ci.com/maniekcz/company--test)
-
 This is coding test
 
 If you run test please execute command below:
